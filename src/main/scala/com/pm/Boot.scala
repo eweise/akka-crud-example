@@ -1,9 +1,10 @@
-package com.pm.http
+package com.pm
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.pm.domain.repository.TaskRepository
 import com.pm.domain.service.TaskService
+import com.pm.http.HttpServer
 import com.typesafe.scalalogging.StrictLogging
 
 object Boot extends App with StrictLogging {
