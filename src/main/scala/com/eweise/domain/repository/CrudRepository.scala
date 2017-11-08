@@ -1,6 +1,6 @@
-package com.pm.domain.repository
+package com.eweise.domain.repository
 
-import com.pm.domain.model.{Entity, ID}
+import com.eweise.domain.model.{Entity, ID}
 
 trait CrudRepository[A <: Entity] {
 

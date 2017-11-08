@@ -1,4 +1,4 @@
-package com.pm.http
+package com.eweise.http
 
 import java.util.UUID
 
@@ -9,9 +9,9 @@ import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{as, complete, entity, extractUri, get, path, post, _}
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.stream.ActorMaterializer
-import com.pm.domain.service.TaskService
-import com.pm.domain.{ErrorResponse, TaskRequest}
-import com.pm.Boot.taskRepo
+import com.eweise.domain.service.TaskService
+import com.eweise.domain.{ErrorResponse, TaskRequest}
+import com.eweise.Boot.taskRepo
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 import io.circe.java8.time._

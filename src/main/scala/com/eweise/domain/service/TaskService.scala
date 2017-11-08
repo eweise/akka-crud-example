@@ -1,10 +1,10 @@
-package com.pm.domain.service
+package com.eweise.domain.service
 
 import java.time.OffsetDateTime
 
-import com.pm.domain.model.{ID, Task}
-import com.pm.domain.repository.TaskRepository
-import com.pm.domain.{TaskRequest, TaskResponse}
+import com.eweise.domain.model.{ID, Task}
+import com.eweise.domain.repository.TaskRepository
+import com.eweise.domain.{TaskRequest, TaskResponse}
 
 class TaskService(implicit taskRepository: TaskRepository) {
 

@@ -1,10 +1,10 @@
-package com.pm
+package com.eweise
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import com.pm.domain.repository.TaskRepository
-import com.pm.domain.service.TaskService
-import com.pm.http.HttpServer
+import com.eweise.domain.repository.TaskRepository
+import com.eweise.domain.service.TaskService
+import com.eweise.http.HttpServer
 import com.typesafe.scalalogging.StrictLogging
 
 object Boot extends App with StrictLogging {

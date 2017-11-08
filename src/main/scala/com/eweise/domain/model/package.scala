@@ -1,4 +1,4 @@
-package com.pm.domain
+package com.eweise.domain
 
 import java.time.OffsetDateTime
 import java.util.UUID
