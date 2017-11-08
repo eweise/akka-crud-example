@@ -16,10 +16,8 @@ class TaskService(implicit taskRepository: TaskRepository) {
             dueDate = req.dueDate.getOrElse(OffsetDateTime.now),
             complete = req.complete.getOrElse(false)
         )
-
         taskRepository.create(task).toTaskResponse
     }
 
     def update(task: Task): Task = taskRepository.update(task)
-
 }

@@ -22,18 +22,14 @@ class HttpServer(implicit val system:ActorSystem,
                  implicit val materializer: ActorMaterializer,
                  implicit val taskService: TaskService) {
 
-
     val log = Logging(system, this.getClass.getName)
-
     implicit val executionContext = system.dispatcher
 
     val route: Route =
         path("tasks") {
-
             get {
                 complete(taskRepo.findAll().map(_.toTaskResponse))
             } ~ post {
-                // todo get user's id from token
                 entity(as[TaskRequest]) { req => complete(taskService.create(UUID.randomUUID(),req))
                 }
             }
@@ -54,5 +50,4 @@ class HttpServer(implicit val system:ActorSystem,
                 complete(HttpResponse(StatusCodes.InternalServerError, entity = response))
             }
     }
-
 }
