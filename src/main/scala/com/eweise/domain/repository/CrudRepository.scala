@@ -20,5 +20,5 @@ trait CrudRepository[A <: Entity] {
 
     def find(id: ID): Option[A] = store.get(id)
 
-    def findAll(): Iterable[A] = store.values
+    def findAll(): List[A] = store.values.toList
 }

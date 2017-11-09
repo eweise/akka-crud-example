@@ -2,22 +2,30 @@ package com.eweise.domain.service
 
 import java.time.OffsetDateTime
 
-import com.eweise.domain.model.{ID, Task}
+import com.eweise.domain.model.{FormValidatorNel, ID, Task}
+import com.eweise.domain.payload.{TaskRequest, TaskResponse}
 import com.eweise.domain.repository.TaskRepository
-import com.eweise.domain.{TaskRequest, TaskResponse}
 
 class TaskService(implicit taskRepository: TaskRepository) {
 
     def create(userId: ID, req: TaskRequest): TaskResponse = {
-        val task = Task(
-            title = req.title,
-            userId = userId,
-            details = req.details,
-            dueDate = req.dueDate.getOrElse(OffsetDateTime.now),
-            complete = req.complete.getOrElse(false)
-        )
-        taskRepository.create(task).toTaskResponse
+//        for {
+//            tr:TaskRequest <- FormValidatorNel.validateTaskRequest(req)
+//        } yield {
+//            val task = Task(
+//                title = tr.title,
+//                userId = userId,
+//                details = tr.details,
+//                dueDate = tr.dueDate.getOrElse(OffsetDateTime.now),
+//                complete = tr.complete.getOrElse(false)
+//            )
+//            taskRepository.create(task).toTaskResponse
+//        }
+        ???
+
     }
 
-    def update(task: Task): Task = taskRepository.update(task)
+    def findAll(userId: ID):List[TaskResponse] = taskRepository.findAll().map(_.toTaskResponse)
+
+    //    def update(task: Task): Task = taskRepository.update(task)
 }
