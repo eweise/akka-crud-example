@@ -1,31 +1,47 @@
 package com.eweise.domain.service
 
-import java.time.OffsetDateTime
 
-import com.eweise.domain.model.{FormValidatorNel, ID, Task}
-import com.eweise.domain.payload.{TaskRequest, TaskResponse}
+import cats.data.Validated.{Invalid, Valid}
+import cats.implicits._
+import com.eweise.domain.model.{ID, Task}
 import com.eweise.domain.repository.TaskRepository
+import com.eweise.domain.service.Validator.{ValidationResult, notNull, success}
+import com.eweise.domain.{TaskRequest, TaskResponse, ValidationFailedException}
+
+import scala.util.{Failure, Try}
+
 
 class TaskService(implicit taskRepository: TaskRepository) {
 
-    def create(userId: ID, req: TaskRequest): TaskResponse = {
-//        for {
-//            tr:TaskRequest <- FormValidatorNel.validateTaskRequest(req)
-//        } yield {
-//            val task = Task(
-//                title = tr.title,
-//                userId = userId,
-//                details = tr.details,
-//                dueDate = tr.dueDate.getOrElse(OffsetDateTime.now),
-//                complete = tr.complete.getOrElse(false)
-//            )
-//            taskRepository.create(task).toTaskResponse
-//        }
-        ???
 
-    }
+    def findAll(userId: ID): Try[List[TaskResponse]] = taskRepository.findAll().map(_.map(toTaskResponse))
 
-    def findAll(userId: ID):List[TaskResponse] = taskRepository.findAll().map(_.toTaskResponse)
+    def create(userId: ID, req: TaskRequest): Try[TaskResponse] =
+        validateForm(req) match {
+            case Valid(_) => taskRepository.create(toTask(userId, req)).map(toTaskResponse)
+            case Invalid(errors) => Failure(new ValidationFailedException(errors.toList))
+        }
 
-    //    def update(task: Task): Task = taskRepository.update(task)
+    def validateForm(req: TaskRequest): ValidationResult[TaskRequest] = (
+            notNull("title", req.title),
+            notNull("email", req.details),
+            success(req.dueDate),
+            success(req.complete)
+    ).mapN(TaskRequest)
+
+
+    def toTaskResponse(task: Task) =
+        new TaskResponse(
+            id = task.id,
+            title = task.title,
+            details = task.details,
+            dueDate = task.dueDate,
+            complete = task.complete)
+
+    def toTask(userId: ID, req: TaskRequest): Task =
+        new Task(
+            userId = userId,
+            title = req.title,
+            details = req.details,
+            dueDate = req.dueDate)
 }
