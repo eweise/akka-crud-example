@@ -29,6 +29,7 @@ lazy val root = (project in file(".")).
                 "com.typesafe.akka" % "akka-slf4j_2.12" % "2.5.6",
                 "com.typesafe.scala-logging" %% "scala-logging" % "3.7.0",
                 "com.h2database" % "h2" % "1.4.191",
+                "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
                 "org.typelevel" % "cats-core_2.12" % "1.0.0-MF",
                 "io.circe" % "circe-core_2.12" % "0.8.0",
                 "io.circe" % "circe-generic_2.12" % "0.8.0",

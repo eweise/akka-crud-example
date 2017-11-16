@@ -5,6 +5,7 @@ import akka.stream.ActorMaterializer
 import com.eweise.domain.repository.TaskRepository
 import com.eweise.domain.service.TaskService
 import com.eweise.http.HttpServer
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.io.StdIn
@@ -17,10 +18,11 @@ object Boot extends App with StrictLogging {
     implicit val taskRepo = new TaskRepository()
     implicit val taskService = new TaskService()
 
-//    Migrate.flyway
+    val config = ConfigFactory.load()
 
     val serverBinding = new HttpServer().start()
 
+    new Migrator(config.getConfig("database")).flyway
     StdIn.readLine()
     // Unbind from the port and shut down when done
     serverBinding
