@@ -26,7 +26,7 @@ case class UserService(implicit userRepo: UserRepository) {
         ).mapN(RegistrationRequest)
     }
 
-    def doLogin(user: LoginRequest): Try[Option[User]] = userRepo.findByEmailAndPassword(user.email, user.password)
+    def doLogin(user: LoginRequest): Option[User] = userRepo.findByEmailAndPassword(user.email, user.password)
 
     def register(request: RegistrationRequest): Either[List[String], RegistrationResponse] = {
         validateForm(request) match {

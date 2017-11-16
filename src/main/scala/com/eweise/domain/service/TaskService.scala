@@ -14,12 +14,12 @@ import scala.util.{Failure, Try}
 class TaskService(implicit taskRepository: TaskRepository) {
 
 
-    def findAll(userId: ID): Try[List[TaskResponse]] = taskRepository.findAll().map(_.map(toTaskResponse))
+    def findAll(userId: ID): List[TaskResponse] = taskRepository.findAll().map(toTaskResponse)
 
-    def create(userId: ID, req: TaskRequest): Try[TaskResponse] =
+    def create(userId: ID, req: TaskRequest): TaskResponse =
         validateForm(req) match {
-            case Valid(_) => taskRepository.create(toTask(userId, req)).map(toTaskResponse)
-            case Invalid(errors) => Failure(new ValidationFailedException(errors.toList))
+            case Valid(_) => toTaskResponse(taskRepository.create(toTask(userId, req)))
+            case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
 
     def validateForm(req: TaskRequest): ValidationResult[TaskRequest] = (

@@ -16,6 +16,9 @@ object Boot extends App with StrictLogging {
 
     implicit val taskRepo = new TaskRepository()
     implicit val taskService = new TaskService()
+
+//    Migrate.flyway
+
     val serverBinding = new HttpServer().start()
 
     StdIn.readLine()

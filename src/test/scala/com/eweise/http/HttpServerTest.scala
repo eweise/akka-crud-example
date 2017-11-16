@@ -14,8 +14,6 @@ import org.mockito.Matchers.{any, refEq}
 import org.mockito.Mockito
 import org.scalatest.{Matchers, WordSpec}
 
-import scala.util.Success
-
 class HttpServerTest extends WordSpec with Matchers with ScalatestRouteTest with PayloadFixture with TimeInstances {
     implicit val mockTaskServer = Mockito.mock(classOf[TaskService])
     val httpServer = new HttpServer()
@@ -25,7 +23,7 @@ class HttpServerTest extends WordSpec with Matchers with ScalatestRouteTest with
             val taskRequest = createTaskRequest()
             val taskResponse = createTaskResponse()
 
-            Mockito.when(mockTaskServer.create(any(), refEq(taskRequest))).thenReturn(Success(taskResponse))
+            Mockito.when(mockTaskServer.create(any(), refEq(taskRequest))).thenReturn(taskResponse)
 
             Post("/tasks", HttpEntity(`application/json`, taskRequest.asJson.noSpaces)) ~> httpServer.route ~> check {
                 responseAs[TaskResponse] shouldEqual taskResponse
@@ -34,7 +32,7 @@ class HttpServerTest extends WordSpec with Matchers with ScalatestRouteTest with
 
         "get tasks" in {
             val tasks = List(createTaskResponse(), createTaskResponse())
-            Mockito.when(mockTaskServer.findAll(any())).thenReturn(Success(tasks))
+            Mockito.when(mockTaskServer.findAll(any())).thenReturn(tasks)
 
             Get("/tasks") ~> httpServer.route ~> check {
                 responseAs[List[TaskResponse]] shouldEqual tasks

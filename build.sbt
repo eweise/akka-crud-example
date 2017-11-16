@@ -3,14 +3,24 @@ lazy val akkaVersion = "2.5.2"
 
 scalacOptions += "-Ypartial-unification"
 
+libraryDependencies ++= Seq(
+)
+
+
 lazy val root = (project in file(".")).
         settings(
             inThisBuild(List(
-                organization := "com.example",
+                organization := "com.eweise",
                 scalaVersion := "2.12.3"
             )),
             name := "server",
             libraryDependencies ++= Seq(
+
+                "com.h2database" % "h2" % "1.4.191",
+
+                // Should not be required, but let's see if it works
+                "org.flywaydb" % "flyway-core" % "4.2.0",
+
                 "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
                 "com.typesafe.akka" %% "akka-http-xml" % akkaHttpVersion,
                 "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -18,6 +28,7 @@ lazy val root = (project in file(".")).
                 "ch.qos.logback" % "logback-classic" % "1.2.3",
                 "com.typesafe.akka" % "akka-slf4j_2.12" % "2.5.6",
                 "com.typesafe.scala-logging" %% "scala-logging" % "3.7.0",
+                "com.h2database" % "h2" % "1.4.191",
                 "org.typelevel" % "cats-core_2.12" % "1.0.0-MF",
                 "io.circe" % "circe-core_2.12" % "0.8.0",
                 "io.circe" % "circe-generic_2.12" % "0.8.0",

@@ -7,6 +7,6 @@ import scala.util.{Failure, Success, Try}
 
 class UserRepository extends CrudRepository[User] {
 
-    def findByEmailAndPassword(email: String, password: String): Try[Option[User]] =
-        findAll().map(l => l.headOption)
+    def findByEmailAndPassword(email: String, password: String): Option[User] =
+        findAll().find(user => user.email == email && user.password == password)
 }

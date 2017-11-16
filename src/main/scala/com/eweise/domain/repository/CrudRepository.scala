@@ -8,19 +8,19 @@ trait CrudRepository[A <: Entity] {
 
     val store = collection.mutable.Map[ID, A]()
 
-    def create(entity: A): Try[A] = {
+    def create(entity: A): A = {
         store.put(entity.id, entity)
-        Success(entity)
+        entity
     }
 
-    def update(entity: A): Try[A] = {
+    def update(entity: A): A = {
         store.put(entity.id, entity)
-        Success(entity)
+        entity
     }
 
-    def delete(entity: A): Try[Unit] = Success(store.remove(entity.id))
+    def delete(entity: A): Unit = store.remove(entity.id)
 
-    def find(id: ID): Try[Option[A]] = Success(store.get(id))
+    def find(id: ID): Option[A] = store.get(id)
 
-    def findAll(): Try[List[A]] = Success(store.values.toList)
+    def findAll(): List[A] = store.values.toList
 }
