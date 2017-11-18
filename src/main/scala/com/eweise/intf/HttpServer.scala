@@ -1,4 +1,4 @@
-package com.eweise.http
+package com.eweise.intf
 
 import akka.actor.ActorSystem
 import akka.event.Logging

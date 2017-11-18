@@ -7,6 +7,7 @@ import com.eweise.domain.model.{ID, Task}
 import com.eweise.domain.repository.TaskRepository
 import com.eweise.domain.service.Validator.{ValidationResult, notNull, success}
 import com.eweise.domain.{TaskRequest, TaskResponse, ValidationFailedException}
+import scalikejdbc.DB
 
 
 class TaskService(implicit taskRepository: TaskRepository) {
@@ -14,19 +15,27 @@ class TaskService(implicit taskRepository: TaskRepository) {
 
     def findAll(userId: ID): List[TaskResponse] = taskRepository.findAll().map(toTaskResponse)
 
+    def find(userId: ID, taskId: ID): Option[TaskResponse] = DB readOnly { implicit session =>
+        taskRepository.find(taskId).map(toTaskResponse)
+    }
+
     def create(userId: ID, req: TaskRequest): TaskResponse =
         validateForm(req) match {
-            case Valid(_) => toTaskResponse(taskRepository.create(toTask(userId, req)))
+            case Valid(_) => toTaskResponse(DB localTx { implicit session =>
+                taskRepository.create(toTask(userId, req))
+            })
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
 
     def update(userId: ID, taskId: ID, req: TaskRequest): TaskResponse =
         validateForm(req) match {
             case Valid(_) =>
-                taskRepository.find(taskId) match {
-                    case Some(existingTask) =>
-                        toTaskResponse(taskRepository.update(updateFields(existingTask, req)))
-                    case _ => throw new RuntimeException("not found")
+                DB localTx { implicit session =>
+                    taskRepository.find(taskId) match {
+                        case Some(existingTask) =>
+                            toTaskResponse(taskRepository.update(updateFields(existingTask, req)))
+                        case _ => throw new RuntimeException("not found")
+                    }
                 }
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }

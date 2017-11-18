@@ -8,15 +8,15 @@ trait CrudRepository[A <: Entity] {
 
     val store = collection.mutable.Map[ID, A]()
 
-    def create(entity: A): A = {
+    def create(entity: A) : A = {
         entity.createdAt = now
-        entity.updatedAt = now
+        entity.modifiedAt = now
         store.put(entity.id, entity)
         entity
     }
 
     def update(entity: A): A = {
-        entity.updatedAt = now
+        entity.modifiedAt = now
         store.put(entity.id, entity)
         entity
     }
