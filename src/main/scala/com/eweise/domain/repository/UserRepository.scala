@@ -2,8 +2,6 @@ package com.eweise.domain.repository
 
 import com.eweise.domain.model.User
 
-import scala.util.{Failure, Success, Try}
-
 
 class UserRepository extends CrudRepository[User] {
 

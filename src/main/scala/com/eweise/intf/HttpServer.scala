@@ -32,13 +32,12 @@ class HttpServer(implicit val system: ActorSystem,
                     entity(as[TaskRequest]) { req => complete(taskService.create(userId, req))
                     }
                 }
-            } ~ path(JavaUUID) {taskId =>
-                 {
-                    put {
-                        entity(as[TaskRequest]) { req => complete(taskService.update(userId, taskId, req))
-                        }
+            } ~ path(JavaUUID) { taskId => {
+                put {
+                    entity(as[TaskRequest]) { req => complete(taskService.update(userId, taskId, req))
                     }
                 }
+            }
             }
         }
 

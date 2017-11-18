@@ -37,7 +37,7 @@ package object model {
         def apply(t: ResultName[Task])(rs: WrappedResultSet) =
             new Task(
                 id = UUID.fromString(rs.string(t.id)),
-                userId = UUID.randomUUID(),
+                userId = UUID.fromString(rs.string(t.userId)),
                 title = rs.string(t.title),
                 details = rs.string(t.details),
                 dueDate = rs.offsetDateTimeOpt(t.dueDate),

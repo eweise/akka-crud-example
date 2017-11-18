@@ -29,7 +29,7 @@ object Validator {
         if (fieldValue._2.matches("(?=^.{10,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) fieldValue._2.validNel
         else s"${fieldValue._1} must be at least 10 characters long, including an uppercase and a lowercase letter, one number and one special character..invalidNel".invalidNel
 
-    def validateEmail(implicit fieldValue:FieldValue[String]): ValidationResult[String] = {
+    def validateEmail(implicit fieldValue: FieldValue[String]): ValidationResult[String] = {
         val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
         fieldValue._2 match {
             case e if emailRegex.findFirstMatchIn(e).isDefined => Validated.valid(e)
@@ -37,6 +37,6 @@ object Validator {
         }
     }
 
-    def success[A](value:A): ValidationResult[A] = value.validNel
+    def success[A](value: A): ValidationResult[A] = value.validNel
 
 }

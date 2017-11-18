@@ -13,8 +13,9 @@ class TaskRepository extends CrudRepository[Task] {
     }
 
     def create(task: Task)(implicit session: DBSession): Task = {
-        sql"""insert into task (id, title, details, due_date, complete, created_at, modified_at) values (
+        sql"""insert into task (id, user_id, title, details, due_date, complete, created_at, modified_at) values (
                  ${task.id},
+                 ${task.userId},
                     ${task.title},
                     ${task.details},
                     ${task.dueDate},

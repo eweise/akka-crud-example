@@ -8,7 +8,7 @@ trait CrudRepository[A <: Entity] {
 
     val store = collection.mutable.Map[ID, A]()
 
-    def create(entity: A) : A = {
+    def create(entity: A): A = {
         entity.createdAt = now
         entity.modifiedAt = now
         store.put(entity.id, entity)

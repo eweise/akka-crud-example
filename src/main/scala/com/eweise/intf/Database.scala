@@ -21,14 +21,11 @@ class Database(config: Config) {
         connectionTimeoutMillis = poolConfig.getLong("connectionTimeoutMillis"),
         validationQuery = poolConfig.getString("validationQuery"))
 
-    // all the connections are released, old connection pool will be abandoned
-    ConnectionPool.add('foo, url, user, password, settings)
-
     GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
         enabled = true,
         singleLineMode = true,
         printUnprocessedStackTrace = true,
-        stackTraceDepth= 1000,
+        stackTraceDepth = 1000,
         logLevel = 'debug,
         warningEnabled = false,
         warningThresholdMillis = 30000L,
