@@ -35,7 +35,7 @@ lazy val root = (project in file(".")).
                 "io.circe" % "circe-generic_2.12" % "0.8.0",
                 "io.circe" % "circe-parser_2.12" % "0.8.0",
                 "io.circe" % "circe-java8_2.12" % "0.8.0",
-                "io.getquill" % "quill-sql_2.12" % "2.1.0",
+                "org.scalikejdbc" % "scalikejdbc_2.12" % "3.1.0",
                 "com.pauldijou" %% "jwt-circe" % "0.14.1",
                 "de.heikoseeberger" % "akka-http-circe_2.12" % "1.18.1",
                 "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,

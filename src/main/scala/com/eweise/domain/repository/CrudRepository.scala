@@ -1,19 +1,22 @@
 package com.eweise.domain.repository
 
-import com.eweise.domain.model.{Entity, ID}
+import java.time.OffsetDateTime.now
 
-import scala.util.{Success, Try}
+import com.eweise.domain.model.{Entity, ID}
 
 trait CrudRepository[A <: Entity] {
 
     val store = collection.mutable.Map[ID, A]()
 
     def create(entity: A): A = {
+        entity.createdAt = now
+        entity.updatedAt = now
         store.put(entity.id, entity)
         entity
     }
 
     def update(entity: A): A = {
+        entity.updatedAt = now
         store.put(entity.id, entity)
         entity
     }

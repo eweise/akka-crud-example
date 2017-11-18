@@ -8,8 +8,6 @@ import com.eweise.domain.repository.TaskRepository
 import com.eweise.domain.service.Validator.{ValidationResult, notNull, success}
 import com.eweise.domain.{TaskRequest, TaskResponse, ValidationFailedException}
 
-import scala.util.{Failure, Try}
-
 
 class TaskService(implicit taskRepository: TaskRepository) {
 
@@ -22,6 +20,17 @@ class TaskService(implicit taskRepository: TaskRepository) {
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
 
+    def update(userId: ID, taskId: ID, req: TaskRequest): TaskResponse =
+        validateForm(req) match {
+            case Valid(_) =>
+                taskRepository.find(taskId) match {
+                    case Some(existingTask) =>
+                        toTaskResponse(taskRepository.update(updateFields(existingTask, req)))
+                    case _ => throw new RuntimeException("not found")
+                }
+            case Invalid(errors) => throw new ValidationFailedException(errors.toList)
+        }
+
     def validateForm(req: TaskRequest): ValidationResult[TaskRequest] = (
             notNull("title", req.title),
             notNull("email", req.details),
@@ -29,6 +38,13 @@ class TaskService(implicit taskRepository: TaskRepository) {
             success(req.complete)
     ).mapN(TaskRequest)
 
+    def updateFields(task: Task, req: TaskRequest): Task = {
+        task.copy(title = req.title,
+            details = req.details,
+            dueDate = req.dueDate,
+            complete = req.complete.getOrElse(task.complete)
+        )
+    }
 
     def toTaskResponse(task: Task) =
         new TaskResponse(

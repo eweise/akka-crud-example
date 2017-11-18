@@ -1,7 +1,5 @@
 package com.eweise.http
 
-import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
@@ -26,11 +24,20 @@ class HttpServer(implicit val system: ActorSystem,
     val log = Logging(system, this.getClass.getName)
 
     val route: Route =
-        path("tasks") {
-            get {
-                complete(taskService.findAll(UUID.randomUUID()))
-            } ~ post {
-                entity(as[TaskRequest]) { req => complete(taskService.create(UUID.randomUUID(), req))
+        pathPrefix(JavaUUID / "tasks") { userId =>
+            pathEnd {
+                get {
+                    complete(taskService.findAll(userId))
+                } ~ post {
+                    entity(as[TaskRequest]) { req => complete(taskService.create(userId, req))
+                    }
+                }
+            } ~ path(JavaUUID) {taskId =>
+                 {
+                    put {
+                        entity(as[TaskRequest]) { req => complete(taskService.update(userId, taskId, req))
+                        }
+                    }
                 }
             }
         }

@@ -7,6 +7,9 @@ package object model {
     type ID = UUID
 
     trait Entity {
+        var createdAt:OffsetDateTime = OffsetDateTime.now
+        var updatedAt:OffsetDateTime = OffsetDateTime.now
+
         def id: ID
     }
 
