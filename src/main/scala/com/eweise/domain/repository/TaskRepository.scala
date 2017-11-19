@@ -5,19 +5,21 @@ import java.time.OffsetDateTime
 import com.eweise.domain.model.{ID, Task}
 import scalikejdbc._
 
-class TaskRepository extends CrudRepository[Task] {
+class TaskRepository {
+    val t = Task.syntax("t")
 
-    def find(taskId: ID)(implicit session: DBSession): Option[Task] = {
-        val t = Task.syntax("t")
+    def findAll(userId: ID)(implicit session: DBSession): List[Task] =
+        sql"""select ${t.result.*} from ${Task.as(t)} where ${t.userId} = ${userId} """
+                .map(Task(t.resultName)).list.apply()
 
-        sql"""select ${t.result.*} from ${Task.as(t)} where ${t.id} = ${taskId} """
+    def find(userId: ID, taskId: ID)(implicit session: DBSession): Option[Task] =
+        sql"""select ${t.result.*} from ${Task.as(t)} where ${t.id} = ${taskId} and ${t.userId} = ${userId} """
                 .map(Task(t.resultName)).single.apply()
-    }
 
-    def create(task: Task)(implicit session: DBSession): Task = {
+    def create(userId: ID, task: Task)(implicit session: DBSession): Task = {
         sql"""insert into task (id, user_id, title, details, due_date, complete, created_at, modified_at) values (
                  ${task.id},
-                 ${task.userId},
+                 ${userId},
                     ${task.title},
                     ${task.details},
                     ${task.dueDate},
@@ -27,16 +29,17 @@ class TaskRepository extends CrudRepository[Task] {
         task
     }
 
-    def update(task: Task)(implicit session: DBSession): Int = {
+    def update(userId: ID, task: Task)(implicit session: DBSession): Task = {
         sql"""update task set
               title = ${task.title},
               details=${task.details},
               due_date=${task.dueDate},
               complete=${task.complete},
               modified_at=${OffsetDateTime.now}
-              where id = ${task.id}""".update.apply()
+              where id = ${task.id} and user_id = ${userId}""".update.apply()
+        task
     }
 
-    def delete(taskId: ID)(implicit session: DBSession): Int =
-        sql"delete from task where id = $taskId".update().apply()
+    def delete(userId: ID, taskId: ID)(implicit session: DBSession): Int =
+        sql"delete from task where id = $taskId and user_id = ${userId}".update().apply()
 }

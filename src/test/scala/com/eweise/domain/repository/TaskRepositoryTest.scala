@@ -13,18 +13,18 @@ class TaskRepositoryTest extends FlatSpec with Matchers with DBTestSupport {
         val userId = UUID.randomUUID()
 
         autoRollback { implicit session =>
-            val newTask = taskRepository.create(Task(userId = userId, title = "A", details = "B"))
-            val response = taskRepository.find(newTask.id)
+            val newTask = taskRepository.create(userId, Task(userId = userId, title = "A", details = "B"))
+            val response = taskRepository.find(userId, newTask.id)
 
             response should not be None
 
-            taskRepository.update(response.get.copy(details = "C"))
+            taskRepository.update(userId, response.get.copy(details = "C"))
 
-            val responseAfterUpdate = taskRepository.find(newTask.id)
+            val responseAfterUpdate = taskRepository.find(userId, newTask.id)
 
             responseAfterUpdate should not be None
 
-            val deleteResult = taskRepository.delete(responseAfterUpdate.get.id)
+            val deleteResult = taskRepository.delete(userId, responseAfterUpdate.get.id)
 
             deleteResult shouldBe  1
         }

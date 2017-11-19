@@ -6,23 +6,24 @@ import cats.implicits._
 import com.eweise.domain.model.{ID, Task}
 import com.eweise.domain.repository.TaskRepository
 import com.eweise.domain.service.Validator.{ValidationResult, notNull, success}
-import com.eweise.domain.{TaskRequest, TaskResponse, ValidationFailedException}
+import com.eweise.domain.{NotFoundException, TaskRequest, TaskResponse, ValidationFailedException}
 import scalikejdbc.DB
 
 
 class TaskService(implicit taskRepository: TaskRepository) {
 
 
-    def findAll(userId: ID): List[TaskResponse] = taskRepository.findAll().map(toTaskResponse)
+    def findAll(userId: ID): List[TaskResponse] =
+        DB readOnly  { implicit session => taskRepository.findAll(userId).map(toTaskResponse)}
 
-    def find(userId: ID, taskId: ID): Option[TaskResponse] = DB readOnly { implicit session =>
-        taskRepository.find(taskId).map(toTaskResponse)
+    def find(userId: ID, taskId: ID): TaskResponse = DB readOnly { implicit session =>
+        toTaskResponse(taskRepository.find(userId, taskId).getOrElse(throw new NotFoundException("task not found")))
     }
 
     def create(userId: ID, req: TaskRequest): TaskResponse =
         validateForm(req) match {
             case Valid(_) => toTaskResponse(DB localTx { implicit session =>
-                taskRepository.create(toTask(userId, req))
+                taskRepository.create(userId, toTask(userId, req))
             })
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
@@ -31,14 +32,22 @@ class TaskService(implicit taskRepository: TaskRepository) {
         validateForm(req) match {
             case Valid(_) =>
                 DB localTx { implicit session =>
-                    taskRepository.find(taskId) match {
+                    taskRepository.find(userId, taskId) match {
                         case Some(existingTask) =>
-                            toTaskResponse(taskRepository.update(updateFields(existingTask, req)))
-                        case _ => throw new RuntimeException("not found")
+                            toTaskResponse(taskRepository.update(userId, updateFields(existingTask, req)))
+                        case _ => throw new NotFoundException("not found")
                     }
                 }
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
+
+    def delete(userId: ID, taskId:ID):Unit = {
+        DB localTx { implicit session =>
+            if(taskRepository.delete(userId, taskId) == 0) {
+                throw new NotFoundException("task not found")
+            }
+        }
+    }
 
     def validateForm(req: TaskRequest): ValidationResult[TaskRequest] = (
             notNull("title", req.title),
