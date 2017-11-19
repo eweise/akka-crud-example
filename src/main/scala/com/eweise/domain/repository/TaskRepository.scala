@@ -1,5 +1,7 @@
 package com.eweise.domain.repository
 
+import java.time.OffsetDateTime
+
 import com.eweise.domain.model.{ID, Task}
 import scalikejdbc._
 
@@ -24,4 +26,17 @@ class TaskRepository extends CrudRepository[Task] {
                     ${task.modifiedAt})""".update.apply()
         task
     }
+
+    def update(task: Task)(implicit session: DBSession): Int = {
+        sql"""update task set
+              title = ${task.title},
+              details=${task.details},
+              due_date=${task.dueDate},
+              complete=${task.complete},
+              modified_at=${OffsetDateTime.now}
+              where id = ${task.id}""".update.apply()
+    }
+
+    def delete(taskId: ID)(implicit session: DBSession): Int =
+        sql"delete from task where id = $taskId".update().apply()
 }

@@ -3,19 +3,30 @@ package com.eweise.domain.repository
 import java.util.UUID
 
 import com.eweise.domain.model.Task
-import com.eweise.test.{DBTestBoot, DBTestSupport}
+import com.eweise.test.DBTestSupport
 import org.scalatest.{FlatSpec, Matchers}
 
-class TaskRepositoryTest extends FlatSpec with Matchers with DBTestBoot with DBTestSupport {
+class TaskRepositoryTest extends FlatSpec with Matchers with DBTestSupport {
 
-    "create" should "save to db" in {
+    "create update and find " should "save to db and find" in {
         val taskRepository = new TaskRepository()
         val userId = UUID.randomUUID()
 
         autoRollback { implicit session =>
             val newTask = taskRepository.create(Task(userId = userId, title = "A", details = "B"))
             val response = taskRepository.find(newTask.id)
+
             response should not be None
+
+            taskRepository.update(response.get.copy(details = "C"))
+
+            val responseAfterUpdate = taskRepository.find(newTask.id)
+
+            responseAfterUpdate should not be None
+
+            val deleteResult = taskRepository.delete(responseAfterUpdate.get.id)
+
+            deleteResult shouldBe  1
         }
     }
 }
