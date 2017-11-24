@@ -6,12 +6,10 @@ import java.util.UUID
 final case class ErrorResponse(statusCode: Int,
                                uri: String,
                                exceptionType: String,
-                               message: String
-                              )
+                               message: String)
 
 final case class LoginRequest(email: String,
-                              password: String
-                             )
+                              password: String)
 
 final case class RegistrationRequest(username: String,
                                      password: String,

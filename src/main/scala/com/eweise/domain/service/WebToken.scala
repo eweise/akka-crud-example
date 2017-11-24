@@ -6,8 +6,8 @@ import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
 object WebToken {
 
-    private val tokens = collection.mutable.Map[String, String]()
     private val TEN_MINUTES = 10 * 60
+    val key = "secret key"
 
     def create(email: String): String = {
 
@@ -16,15 +16,13 @@ object WebToken {
             issuedAt = Some(Instant.now.getEpochSecond)
         )
 
-        val key = "secret key"
 
-        val algo = JwtAlgorithm.HS256
-
-        val token = JwtCirce.encode(claim, key, algo)
-        tokens.put(email, token)
-        token
+        JwtCirce.encode(claim, key, JwtAlgorithm.HS256)
     }
 
-    def find(email: String): Option[String] = tokens.get(email)
+    def decode(token:String) = {
+        val decoded = JwtCirce.decodeAll(token)
+        decoded
+    }
 
 }

@@ -15,10 +15,10 @@ package object model {
         def id: ID
     }
 
-    case class User(id: UUID = UUID.randomUUID(),
-                    username: String,
-                    email: String,
-                    password: String
+    case class Person(id: UUID = UUID.randomUUID(),
+                      username: String,
+                      email: String,
+                      password: String
                    ) extends Entity
 
     case class Task(id: ID = UUID.randomUUID(),
