@@ -24,7 +24,7 @@ class Database(config: Config) {
 
     GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
         enabled = true,
-        singleLineMode = false,
+        singleLineMode = true,
         printUnprocessedStackTrace = true,
         stackTraceDepth = 1000,
         logLevel = 'debug,
@@ -33,9 +33,6 @@ class Database(config: Config) {
         warningLogLevel = 'warn
     )
 
-    GlobalSettings.queryFailureListener = (sql: String, params: Seq[Any], e) => {
-        e.printStackTrace()
-    }
 
 }
 
