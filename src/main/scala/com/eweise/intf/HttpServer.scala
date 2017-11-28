@@ -6,9 +6,9 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{as, complete, entity, extractUri, get, path, post, _}
-import akka.http.scaladsl.server.{Directive1, ExceptionHandler, Route}
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.stream.ActorMaterializer
-import com.eweise.domain.service.{TaskService, WebToken}
+import com.eweise.domain.service.TaskService
 import com.eweise.domain.{ErrorResponse, NotFoundException, TaskRequest}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._

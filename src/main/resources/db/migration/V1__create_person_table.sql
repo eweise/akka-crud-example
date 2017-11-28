@@ -1,4 +1,4 @@
 create table PERSON (
-    ID int not null,
-    data jsonb not null
+    ID uuid not null,
+    data text not null
 );

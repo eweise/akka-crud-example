@@ -2,10 +2,11 @@ package com.eweise.domain.service
 
 import cats.data.Validated.{Invalid, Valid}
 import cats.implicits._
-import com.eweise.domain.model.Person
+import com.eweise.domain.model.{Person}
 import com.eweise.domain.repository.PersonRepository
 import com.eweise.domain.service.Validator.FieldValue
 import com.eweise.domain.{LoginRequest, RegistrationRequest, RegistrationResponse, ValidationFailedException}
+import scalikejdbc.DB
 
 
 case class PersonService(implicit userRepo: PersonRepository) {
@@ -28,7 +29,11 @@ case class PersonService(implicit userRepo: PersonRepository) {
     def register(request: RegistrationRequest): RegistrationResponse = {
         validateForm(request) match {
             case Valid(value) => {
-                userRepo.create(createPerson(value))
+
+                DB localTx { implicit session =>
+                    userRepo.create(createPerson(value))
+                }
+
                 RegistrationResponse(WebToken.create(request.email))
             }
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)

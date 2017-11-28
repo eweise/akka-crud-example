@@ -14,7 +14,7 @@ class TaskService(implicit taskRepository: TaskRepository) {
 
 
     def findAll(userId: ID): List[TaskResponse] =
-        DB readOnly  { implicit session => taskRepository.findAll(userId).map(toTaskResponse)}
+        DB readOnly { implicit session => taskRepository.findAll(userId).map(toTaskResponse) }
 
     def find(userId: ID, taskId: ID): TaskResponse = DB readOnly { implicit session =>
         toTaskResponse(taskRepository.find(userId, taskId).getOrElse(throw new NotFoundException("task not found")))
@@ -41,9 +41,9 @@ class TaskService(implicit taskRepository: TaskRepository) {
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
 
-    def delete(userId: ID, taskId:ID):Unit = {
+    def delete(userId: ID, taskId: ID): Unit = {
         DB localTx { implicit session =>
-            if(taskRepository.delete(userId, taskId) == 0) {
+            if (taskRepository.delete(userId, taskId) == 0) {
                 throw new NotFoundException("task not found")
             }
         }
@@ -65,7 +65,7 @@ class TaskService(implicit taskRepository: TaskRepository) {
     }
 
     def toTaskResponse(task: Task) =
-        new TaskResponse(
+        TaskResponse(
             id = task.id,
             title = task.title,
             details = task.details,
@@ -73,7 +73,7 @@ class TaskService(implicit taskRepository: TaskRepository) {
             complete = task.complete)
 
     def toTask(userId: ID, req: TaskRequest): Task =
-        new Task(
+        Task(
             userId = userId,
             title = req.title,
             details = req.details,

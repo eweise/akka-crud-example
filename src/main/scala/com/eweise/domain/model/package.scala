@@ -8,27 +8,34 @@ import scalikejdbc._
 package object model {
     type ID = UUID
 
-    trait Entity {
-        var createdAt: OffsetDateTime = OffsetDateTime.now
-        var modifiedAt: OffsetDateTime = OffsetDateTime.now
-
-        def id: ID
-    }
-
     case class Person(id: UUID = UUID.randomUUID(),
                       username: String,
                       email: String,
-                      password: String
-                   ) extends Entity
+                      password: String,
+                      primaryAddress: Option[Address] = None,
+                      primaryPhone: Option[String] = None,
+                      primaryEmail: Option[String] = None,
+                      createdAt: OffsetDateTime = OffsetDateTime.now,
+                      modifiedAt: OffsetDateTime = OffsetDateTime.now
+                     )
+
+
+    case class Address(street1: String,
+                       street2: Option[String],
+                       city: String,
+                       state: String,
+                       postalCode: String)
+
 
     case class Task(id: ID = UUID.randomUUID(),
                     userId: ID,
                     title: String,
                     details: String,
                     dueDate: Option[OffsetDateTime] = None,
-                    complete: Boolean = false
-                   ) extends Entity {
-    }
+                    complete: Boolean = false,
+                    createdAt: OffsetDateTime = OffsetDateTime.now,
+                    modifiedAt: OffsetDateTime = OffsetDateTime.now
+                   )
 
 
     object Task extends SQLSyntaxSupport[Task] {
