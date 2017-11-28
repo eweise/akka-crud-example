@@ -8,8 +8,8 @@ import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{as, complete, entity, extractUri, get, path, post, _}
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.stream.ActorMaterializer
-import com.eweise.domain.service.TaskService
-import com.eweise.domain.{ErrorResponse, NotFoundException, TaskRequest}
+import com.eweise.domain.service.{PersonService, TaskService}
+import com.eweise.domain.{ErrorResponse, LoginRequest, NotFoundException, RegistrationRequest, TaskRequest, ValidationFailedException}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 import io.circe.java8.time._
@@ -19,7 +19,8 @@ import scala.concurrent.Future
 
 
 class HttpServer(implicit val system: ActorSystem,
-                 implicit val taskService: TaskService) extends TimeInstances {
+                 implicit val taskService: TaskService,
+                 implicit val personService: PersonService) extends TimeInstances {
 
     val log = Logging(system, this.getClass.getName)
 
@@ -41,6 +42,18 @@ class HttpServer(implicit val system: ActorSystem,
             } ~ path(JavaUUID) { taskId =>
                 complete(taskService.find(userId, taskId))
             }
+        } ~ pathPrefix("users") {
+            path("login") {
+                pathEnd {
+                    post {
+                        entity(as[LoginRequest]) { req => complete(personService.login(req)) }
+                    }
+                }
+            } ~ pathEnd {
+                post {
+                    entity(as[RegistrationRequest]) { req => complete(personService.register(req)) }
+                }
+            }
         }
 
     implicit def defaultExceptionHandler = ExceptionHandler {
@@ -52,6 +65,16 @@ class HttpServer(implicit val system: ActorSystem,
                     uri.toString(),
                     notFound.getClass.getName,
                     notFound.getMessage).asJson.noSpaces
+
+                complete(HttpResponse(StatusCodes.InternalServerError, entity = response))
+            }
+        case validationEx: ValidationFailedException =>
+            extractUri { uri =>
+                val response = ErrorResponse(
+                    StatusCodes.BadRequest.intValue,
+                    uri.toString(),
+                    validationEx.getClass.getName,
+                    validationEx.errors.asJson.noSpaces).asJson.noSpaces
 
                 complete(HttpResponse(StatusCodes.InternalServerError, entity = response))
             }
@@ -68,16 +91,16 @@ class HttpServer(implicit val system: ActorSystem,
             }
     }
 
-//    private def authenticated: Directive1[Map[String, Any]] =
-//        optionalHeaderValueByName("Authorization").flatMap {
-//            case Some(jwt) if isTokenExpired(jwt) =>
-//                complete(StatusCodes.Unauthorized -> "Token expired.")
-//
-//            case Some(jwt) if WebToken.decode(jwt) =>
-//                provide(getClaims(jwt).getOrElse(Map.empty[String, Any]))
-//
-//            case _ => complete(StatusCodes.Unauthorized)
-//        }
+    //    private def authenticated: Directive1[Map[String, Any]] =
+    //        optionalHeaderValueByName("Authorization").flatMap {
+    //            case Some(jwt) if isTokenExpired(jwt) =>
+    //                complete(StatusCodes.Unauthorized -> "Token expired.")
+    //
+    //            case Some(jwt) if WebToken.decode(jwt) =>
+    //                provide(getClaims(jwt).getOrElse(Map.empty[String, Any]))
+    //
+    //            case _ => complete(StatusCodes.Unauthorized)
+    //        }
 
 
     def start()(implicit materializer: ActorMaterializer): Future[ServerBinding] =

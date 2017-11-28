@@ -16,6 +16,9 @@ class PersonRepositoryTest extends FlatSpec with Matchers with DBTestSupport {
 
             val maybePerson = personRepo.find(newPerson.id)
             maybePerson should not be None
+
+            val maybePersonByEmailAndPassword = personRepo.findByEmailAndPassword("b@c.com", "D")
+            maybePersonByEmailAndPassword should not be None
         }
     }
 }

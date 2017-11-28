@@ -2,8 +2,8 @@ package com.eweise
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import com.eweise.domain.repository.TaskRepository
-import com.eweise.domain.service.TaskService
+import com.eweise.domain.repository.{PersonRepository, TaskRepository}
+import com.eweise.domain.service.{PersonService, TaskService, WebToken}
 import com.eweise.intf.{Database, HttpServer}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
@@ -11,12 +11,17 @@ import com.typesafe.scalalogging.StrictLogging
 import scala.io.StdIn
 
 object Boot extends App with StrictLogging {
-    implicit val system = ActorSystem()
-    implicit val materializer = ActorMaterializer()
-    implicit val executionContext = system.dispatcher
+    lazy implicit val system = ActorSystem()
+    lazy implicit val materializer = ActorMaterializer()
+    lazy implicit val executionContext = system.dispatcher
 
-    implicit val taskRepo = new TaskRepository()
-    implicit val taskService = new TaskService()
+    lazy implicit val webToken = new WebToken()
+
+    lazy implicit val personRepo = new PersonRepository()
+    lazy implicit val taskRepo = new TaskRepository()
+    lazy implicit val taskService = new TaskService()
+    lazy implicit val personService = new PersonService()
+
 
     val config = ConfigFactory.load()
     val dbConfig = config.getConfig("database")

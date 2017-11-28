@@ -1,6 +1,7 @@
 package com.eweise.domain
 
-class ValidationFailedException(val errors: List[String]) extends RuntimeException
+class ValidationFailedException(val errors: List[String])
+        extends RuntimeException(errors.reduceLeft((err, accum) => err + " " + accum))
 
 class NotFoundException(message: String) extends RuntimeException(message)
 

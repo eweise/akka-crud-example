@@ -9,11 +9,16 @@ import scalikejdbc._
 
 class PersonRepository extends RepositoryHelper with TimeInstances {
 
-    def findByEmailAndPassword(email: String, password: String): Option[Person] = ???
+    def findByEmailAndPassword(email: String, password: String)(implicit session: DBSession): Option[Person] = {
+        sql"""select data::json#>>'{}' as data from person
+             where data::json->>'email'=$email
+             and data::json->>'password'=$password"""
+                .map(rs => handleResult(decode[Person](rs.string("data")))).single().apply
+    }
 
     def create(person: Person)(implicit session: DBSession): Person = {
-        val data = person.asJson.noSpaces
-        sql"""insert into person (id, data) values (${person.id}, $data)""".update.apply
+        val data:String = person.asJson.noSpaces
+        sql"""insert into person (id, data) values (${person.id}, CAST($data as jsonb))""".update.apply
         mustExist(find(person.id))
     }
 
@@ -22,6 +27,6 @@ class PersonRepository extends RepositoryHelper with TimeInstances {
         ).collection.apply()
 
     def find(userId: ID)(implicit session: DBSession): Option[Person] =
-        sql"select data from person where id = $userId".map(rs =>
+        sql"select data::json#>>'{}' as data from person where id = $userId".map(rs =>
             handleResult(decode[Person](rs.string("data")))).single.apply()
 }

@@ -4,7 +4,7 @@ import java.time.Instant
 
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
-object WebToken {
+class WebToken {
 
     private val TEN_MINUTES = 10 * 60
     val key = "secret key"

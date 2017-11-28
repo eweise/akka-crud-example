@@ -2,8 +2,9 @@ package com.eweise.intf
 
 import com.typesafe.config.Config
 
-class Database(config: Config) {
 
+
+class Database(config: Config) {
     import scalikejdbc._
 
     private val user = config.getString("user")
@@ -23,7 +24,7 @@ class Database(config: Config) {
 
     GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
         enabled = true,
-        singleLineMode = true,
+        singleLineMode = false,
         printUnprocessedStackTrace = true,
         stackTraceDepth = 1000,
         logLevel = 'debug,
@@ -31,6 +32,10 @@ class Database(config: Config) {
         warningThresholdMillis = 30000L,
         warningLogLevel = 'warn
     )
+
+    GlobalSettings.queryFailureListener = (sql: String, params: Seq[Any], e) => {
+        e.printStackTrace()
+    }
 
 }
 

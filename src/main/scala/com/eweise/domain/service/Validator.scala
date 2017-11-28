@@ -26,8 +26,8 @@ object Validator {
         else s"${fieldValue._1} cannot contain special characters.".invalidNel
 
     def validatePassword(implicit fieldValue: FieldValue[String]): ValidationResult[String] =
-        if (fieldValue._2.matches("(?=^.{10,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) fieldValue._2.validNel
-        else s"${fieldValue._1} must be at least 10 characters long, including an uppercase and a lowercase letter, one number and one special character..invalidNel".invalidNel
+        if (fieldValue._2.matches("(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")) fieldValue._2.validNel
+        else s"${fieldValue._1} must be at least 8 characters long, including an uppercase and a lowercase letter, one number and one special character.".invalidNel
 
     def validateEmail(implicit fieldValue: FieldValue[String]): ValidationResult[String] = {
         val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
