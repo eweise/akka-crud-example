@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.eweise.domain.repository.{PersonRepository, TaskRepository}
 import com.eweise.domain.service.{PersonService, TaskService, WebToken}
-import com.eweise.intf.{Database, HttpServer}
+import com.eweise.intf.{Database, HttpServer, Migrator}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 

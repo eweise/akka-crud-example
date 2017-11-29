@@ -1,7 +1,5 @@
-package com.eweise.test
+package com.eweise.intf
 
-import com.eweise.Migrator
-import com.eweise.intf.Database
 import com.typesafe.config.ConfigFactory
 import scalikejdbc.{ConnectionPool, DB, DBSession, using}
 

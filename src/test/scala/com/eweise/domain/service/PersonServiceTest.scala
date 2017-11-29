@@ -2,7 +2,7 @@ package com.eweise.domain.service
 
 import com.eweise.domain.RegistrationRequest
 import com.eweise.domain.repository.PersonRepository
-import com.eweise.test.DBTestSupport
+import com.eweise.intf.DBTestSupport
 import org.mockito.Mockito
 import org.scalatest.{FlatSpec, Matchers}
 

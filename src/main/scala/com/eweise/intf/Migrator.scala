@@ -1,4 +1,4 @@
-package com.eweise
+package com.eweise.intf
 
 import com.typesafe.config.Config
 import org.flywaydb.core.Flyway

@@ -1,7 +1,7 @@
 package com.eweise.domain.repository
 
 import com.eweise.domain.model.Person
-import com.eweise.test.DBTestSupport
+import com.eweise.intf.DBTestSupport
 import org.scalatest.{FlatSpec, Matchers}
 
 class PersonRepositoryTest extends FlatSpec with Matchers with DBTestSupport {

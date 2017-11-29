@@ -3,7 +3,7 @@ package com.eweise.domain.repository
 import java.util.UUID
 
 import com.eweise.domain.model.Task
-import com.eweise.test.DBTestSupport
+import com.eweise.intf.DBTestSupport
 import org.scalatest.{FlatSpec, Matchers}
 
 class TaskRepositoryTest extends FlatSpec with Matchers with DBTestSupport {
