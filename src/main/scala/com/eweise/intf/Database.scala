@@ -32,7 +32,5 @@ class Database(config: Config) {
         warningThresholdMillis = 30000L,
         warningLogLevel = 'warn
     )
-
-
 }
 

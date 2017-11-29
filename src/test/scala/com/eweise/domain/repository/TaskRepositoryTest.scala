@@ -27,6 +27,8 @@ class TaskRepositoryTest extends FlatSpec with Matchers with DBTestSupport {
             val deleteResult = taskRepository.delete(userId, responseAfterUpdate.get.id)
 
             deleteResult shouldBe  1
+
+            taskRepository.findAll(userId).length shouldEqual 0
         }
     }
 }

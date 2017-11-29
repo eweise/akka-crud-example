@@ -22,6 +22,12 @@ class PersonRepository extends RepositoryHelper with TimeInstances {
         mustExist(find(person.id))
     }
 
+    def update(person:Person)(implicit session: DBSession): Person = {
+        val data:String = person.asJson.noSpaces
+        sql"""update person set data = CAST($data as jsonb) where id=${person.id}""".update.apply
+        mustExist(find(person.id))
+    }
+
     def findAll()(implicit session: DBSession): List[Person] =
         sql"select data from person".map(rs => handleResult(decode[Person](rs.string("data")))
         ).collection.apply()
