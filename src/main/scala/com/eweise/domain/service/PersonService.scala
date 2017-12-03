@@ -9,7 +9,7 @@ import com.eweise.domain.{LoginRequest, RegistrationRequest, RegistrationRespons
 import scalikejdbc.DB
 
 
-class PersonService(implicit userRepo: PersonRepository, webToken: WebToken ) {
+class PersonService(implicit userRepo: PersonRepository, webToken: JwtToken ) {
 
     def validateForm(req: RegistrationRequest): Validator.ValidationResult[RegistrationRequest] = {
         def validateUserName(implicit fieldValue: FieldValue[String]) = Validator.notNull *> Validator.length(6)
@@ -30,10 +30,10 @@ class PersonService(implicit userRepo: PersonRepository, webToken: WebToken ) {
     def register(request: RegistrationRequest): RegistrationResponse = {
         validateForm(request) match {
             case Valid(value) => {
-                DB localTx { implicit session =>
-                    userRepo.create(createPerson(value))
+                val newPerson = DB localTx { implicit session =>
+                        userRepo.create(createPerson(value))
                 }
-                RegistrationResponse(webToken.create(request.email))
+                RegistrationResponse(webToken.create(newPerson.id.toString))
             }
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }

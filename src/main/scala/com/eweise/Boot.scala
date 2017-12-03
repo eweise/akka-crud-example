@@ -3,7 +3,7 @@ package com.eweise
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.eweise.domain.repository.{PersonRepository, TaskRepository}
-import com.eweise.domain.service.{PersonService, TaskService, WebToken}
+import com.eweise.domain.service.{JwtToken, PersonService, TaskService, UserClaim}
 import com.eweise.intf.{Database, HttpServer, Migrator}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
@@ -15,7 +15,7 @@ object Boot extends App with StrictLogging {
     lazy implicit val materializer = ActorMaterializer()
     lazy implicit val executionContext = system.dispatcher
 
-    lazy implicit val webToken = new WebToken()
+    lazy implicit val webToken = new JwtToken()
 
     lazy implicit val personRepo = new PersonRepository()
     lazy implicit val taskRepo = new TaskRepository()

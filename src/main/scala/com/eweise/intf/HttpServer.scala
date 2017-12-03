@@ -6,9 +6,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{as, complete, entity, extractUri, get, path, post, _}
+import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.stream.ActorMaterializer
-import com.eweise.domain.service.{PersonService, TaskService}
+import com.eweise.domain.service.{JwtToken, PersonService, TaskService, UserClaim}
 import com.eweise.domain.{ErrorResponse, LoginRequest, NotFoundException, RegistrationRequest, TaskRequest, ValidationFailedException}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
@@ -20,27 +21,30 @@ import scala.concurrent.Future
 
 class HttpServer(implicit val system: ActorSystem,
                  implicit val taskService: TaskService,
-                 implicit val personService: PersonService) extends TimeInstances {
+                 implicit val personService: PersonService,
+                implicit val jwtToken : JwtToken ) extends TimeInstances {
 
     val log = Logging(system, this.getClass.getName)
 
     val route: Route =
-        pathPrefix(JavaUUID / "tasks") { userId =>
-            pathEnd {
-                get {
-                    complete(taskService.findAll(userId))
-                } ~ post {
-                    entity(as[TaskRequest]) { req => complete(taskService.create(userId, req))
+        authenticateOAuth2(realm = "secure site", myUserPassAuthenticator) { userName =>
+            pathPrefix(JavaUUID / "tasks") { userId =>
+                pathEnd {
+                    get {
+                        complete(taskService.findAll(userId))
+                    } ~ post {
+                        entity(as[TaskRequest]) { req => complete(taskService.create(userId, req))
+                        }
+                    }
+                } ~ path(JavaUUID) { taskId => {
+                    put {
+                        entity(as[TaskRequest]) { req => complete(taskService.update(userId, taskId, req))
+                        }
                     }
                 }
-            } ~ path(JavaUUID) { taskId => {
-                put {
-                    entity(as[TaskRequest]) { req => complete(taskService.update(userId, taskId, req))
-                    }
+                } ~ path(JavaUUID) { taskId =>
+                    complete(taskService.find(userId, taskId))
                 }
-            }
-            } ~ path(JavaUUID) { taskId =>
-                complete(taskService.find(userId, taskId))
             }
         } ~ pathPrefix("users") {
             path("login") {
@@ -55,6 +59,7 @@ class HttpServer(implicit val system: ActorSystem,
                 }
             }
         }
+
 
     implicit def defaultExceptionHandler = ExceptionHandler {
         case notFound: NotFoundException =>
@@ -91,20 +96,16 @@ class HttpServer(implicit val system: ActorSystem,
             }
     }
 
-    //    private def authenticated: Directive1[Map[String, Any]] =
-    //        optionalHeaderValueByName("Authorization").flatMap {
-    //            case Some(jwt) if isTokenExpired(jwt) =>
-    //                complete(StatusCodes.Unauthorized -> "Token expired.")
-    //
-    //            case Some(jwt) if WebToken.decode(jwt) =>
-    //                provide(getClaims(jwt).getOrElse(Map.empty[String, Any]))
-    //
-    //            case _ => complete(StatusCodes.Unauthorized)
-    //        }
-
+    def myUserPassAuthenticator(credentials: Credentials): Option[String] =
+        credentials match {
+            case p@Credentials.Provided(id)  => {
+               val result = jwtToken.find(id)
+                println(result)
+                None
+            }
+            case _ => None
+        }
 
     def start()(implicit materializer: ActorMaterializer): Future[ServerBinding] =
         Http().bindAndHandle(route, "localhost", 8080)
-
-
 }
