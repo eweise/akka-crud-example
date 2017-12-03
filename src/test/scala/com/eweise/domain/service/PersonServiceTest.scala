@@ -8,7 +8,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito
 import org.scalatest.{FlatSpec, Matchers}
 
-class PersonServiceTest extends FlatSpec with Matchers with DBTestSupport {
+class PersonServiceTest extends DBTestSupport {
 
     implicit val mockPersonRepo = Mockito.mock(classOf[PersonRepository])
     implicit val webToken = Mockito.mock(classOf[JwtToken])
