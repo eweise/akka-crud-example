@@ -1,4 +1,4 @@
-create table PERSON (
-    ID uuid not null,
-    data jsonb not null
+CREATE TABLE PERSON (
+    ID uuid PRIMARY KEY,
+    data jsonb NOT NULL
 );

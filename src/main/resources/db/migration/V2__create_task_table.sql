@@ -1,10 +1,10 @@
-create table TASK (
-    ID uuid not null,
-    user_id uuid not null,
-    title text not null,
-    details text null,
+CREATE TABLE TASK (
+    ID uuid PRIMARY KEY,
+    user_id uuid NOT NULL,
+    title text NOT NULL,
+    details text NULL,
     due_date timestamp,
-    complete bool not null,
-    created_at timestamp not null,
-    modified_at timestamp not null
+    complete bool NOT NULL,
+    created_at timestamp NOT NULL,
+    modified_at timestamp NOT NULL
 );
