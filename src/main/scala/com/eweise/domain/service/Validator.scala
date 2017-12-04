@@ -17,9 +17,9 @@ object Validator {
         if (fieldValue._2 != null) fieldValue._2.validNel
         else s"${fieldValue._1} is null".invalidNel
 
-    def length(length: Int)(implicit fieldValue: FieldValue[String]): ValidationResult[String] =
-        if (fieldValue._2.length >= length) fieldValue._2.validNel
-        else s"${fieldValue._1} is null".invalidNel
+    def maxLength(length: Int)(implicit fieldValue: FieldValue[String]): ValidationResult[String] =
+        if (fieldValue._2.length <= length) fieldValue._2.validNel
+        else s"${fieldValue._1} is $length".invalidNel
 
     def specialCharacters(implicit fieldValue: FieldValue[String]): ValidationResult[String] =
         if (fieldValue._2.matches("^[a-zA-Z0-9]+$")) fieldValue._2.validNel

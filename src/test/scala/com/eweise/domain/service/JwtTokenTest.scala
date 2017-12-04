@@ -1,7 +1,6 @@
 package com.eweise.domain.service
 
 import java.util.UUID
-import com.eweise.domain.service.UserClaim
 
 import org.scalatest.{FlatSpec, Matchers}
 

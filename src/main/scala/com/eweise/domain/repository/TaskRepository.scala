@@ -40,6 +40,6 @@ class TaskRepository extends RepositoryHelper {
         mustExist(find(userId, task.id))
     }
 
-    def delete(userId: ID, taskId: ID)(implicit session: DBSession): Int =
-        sql"delete from task where id = $taskId and user_id = $userId".update().apply()
+    def delete(userId: ID, taskId: ID)(implicit session: DBSession): Boolean =
+        sql"delete from task where id = $taskId and user_id = $userId".update().apply() > 0
 }

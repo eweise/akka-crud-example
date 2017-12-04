@@ -43,7 +43,7 @@ class TaskService(implicit taskRepository: TaskRepository) {
 
     def delete(userId: ID, taskId: ID): Unit = {
         DB localTx { implicit session =>
-            if (taskRepository.delete(userId, taskId) == 0) {
+            if (!taskRepository.delete(userId, taskId)) {
                 throw new NotFoundException("task not found")
             }
         }
