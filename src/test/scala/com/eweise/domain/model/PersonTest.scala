@@ -18,7 +18,7 @@ class PersonTest extends FlatSpec with Matchers with TimeInstances {
         person.email shouldEqual "b@c.com"
         person.password shouldEqual "D"
         person.username shouldEqual "A"
-        person.primaryAddress shouldEqual  None
-        person.primaryAddress shouldEqual  None
+        person.primaryAddress shouldEqual None
+        person.primaryAddress shouldEqual None
     }
 }

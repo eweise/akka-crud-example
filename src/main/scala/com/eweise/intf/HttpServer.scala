@@ -9,7 +9,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, extractUri, g
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.stream.ActorMaterializer
-import com.eweise.domain.service.{JwtToken, PersonService, TaskService, UserClaim}
+import com.eweise.domain.service.{JwtToken, PersonService, TaskService}
 import com.eweise.domain.{ErrorResponse, LoginRequest, NotFoundException, RegistrationRequest, TaskRequest, ValidationFailedException}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
@@ -22,7 +22,7 @@ import scala.concurrent.Future
 class HttpServer(implicit val system: ActorSystem,
                  implicit val taskService: TaskService,
                  implicit val personService: PersonService,
-                implicit val jwtToken : JwtToken ) extends TimeInstances {
+                 implicit val jwtToken: JwtToken) extends TimeInstances {
 
     val log = Logging(system, this.getClass.getName)
 
@@ -98,8 +98,8 @@ class HttpServer(implicit val system: ActorSystem,
 
     def myUserPassAuthenticator(credentials: Credentials): Option[String] =
         credentials match {
-            case p@Credentials.Provided(id)  => {
-               val result = jwtToken.find(id)
+            case p@Credentials.Provided(id) => {
+                val result = jwtToken.find(id)
                 println(result)
                 None
             }

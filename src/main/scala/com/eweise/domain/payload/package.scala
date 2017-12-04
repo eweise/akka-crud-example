@@ -8,16 +8,13 @@ final case class ErrorResponse(statusCode: Int,
                                exceptionType: String,
                                message: String)
 
-final case class LoginRequest(email: String,
-                              password: String)
-
-final case class RegistrationRequest(username: String,
-                                     password: String,
-                                     email: String)
-
-final case class RegistrationResponse(token: String)
+final case class LoginRequest(email: String, password: String)
 
 final case class LoginResponse(username: String, token: String)
+
+final case class RegistrationRequest(username: String, password: String, email: String)
+
+final case class RegistrationResponse(token: String)
 
 final case class TaskRequest(title: String,
                              details: String,

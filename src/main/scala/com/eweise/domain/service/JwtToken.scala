@@ -7,8 +7,6 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 
-import scala.util.{Success, Try}
-
 case class UserClaim(userId: UUID)
 
 class JwtToken {
@@ -32,7 +30,4 @@ class JwtToken {
             claim <- JwtCirce.decode(token, key, List(JwtAlgorithm.HS256)).toEither
             userClaim <- decode[UserClaim](claim.content)
         } yield userClaim
-
-
-
 }

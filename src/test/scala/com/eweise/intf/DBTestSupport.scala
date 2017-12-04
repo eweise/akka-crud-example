@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, Matchers}
 import scalikejdbc.{ConnectionPool, DB, DBSession, using}
 
-trait DBTestSupport extends FlatSpec with Matchers{
+trait DBTestSupport extends FlatSpec with Matchers {
 
     val config = ConfigFactory.load()
     val dbConfig = config.getConfig("database")

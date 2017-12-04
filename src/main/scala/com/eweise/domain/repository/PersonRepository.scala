@@ -17,13 +17,13 @@ class PersonRepository extends RepositoryHelper with TimeInstances {
     }
 
     def create(person: Person)(implicit session: DBSession): Person = {
-        val data:String = person.asJson.noSpaces
-        val result= sql"""insert into person (id, data) values (${person.id}, CAST($data as jsonb))""".update.apply
+        val data: String = person.asJson.noSpaces
+        val result = sql"""insert into person (id, data) values (${person.id}, CAST($data as jsonb))""".update.apply
         mustExist(find(person.id))
     }
 
-    def update(person:Person)(implicit session: DBSession): Person = {
-        val data:String = person.asJson.noSpaces
+    def update(person: Person)(implicit session: DBSession): Person = {
+        val data: String = person.asJson.noSpaces
         sql"""update person set data = CAST($data as jsonb) where id=${person.id}""".update.apply
         mustExist(find(person.id))
     }

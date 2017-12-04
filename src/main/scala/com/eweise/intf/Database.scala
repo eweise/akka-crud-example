@@ -3,8 +3,8 @@ package com.eweise.intf
 import com.typesafe.config.Config
 
 
-
 class Database(config: Config) {
+
     import scalikejdbc._
 
     private val user = config.getString("user")
