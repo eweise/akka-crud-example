@@ -2,7 +2,7 @@ package com.eweise.domain.service
 
 import com.eweise.domain.model.Person
 import com.eweise.domain.repository.PersonRepository
-import com.eweise.domain.{RegistrationRequest, ValidationFailedException}
+import com.eweise.domain.{LoginRequest, NotFoundException, RegistrationRequest, ValidationFailedException}
 import com.eweise.intf.DBTestSupport
 import org.mockito.Matchers._
 import org.mockito.Mockito
@@ -32,6 +32,17 @@ class PersonServiceTest extends DBTestSupport {
     it should "validate form" in new Fixture {
         assertThrows[ValidationFailedException] {
             personService.register(registrationRequest.copy(password = null))
+        }
+    }
+
+    "login" should "validate person and return token" in new Fixture {
+        Mockito.when(mockPersonRepo.findByEmailAndPassword(any(), any())(any())).thenReturn(Some(person))
+        val response = personService.login(LoginRequest("email", "password"))
+    }
+    it should "throw exception if login fails" in new Fixture {
+        Mockito.when(mockPersonRepo.findByEmailAndPassword(any(), any())(any())).thenReturn(None)
+        assertThrows[NotFoundException] {
+            personService.login(LoginRequest("email", "bad password"))
         }
     }
 

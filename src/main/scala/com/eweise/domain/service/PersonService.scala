@@ -5,7 +5,7 @@ import cats.implicits._
 import com.eweise.domain.model.Person
 import com.eweise.domain.repository.PersonRepository
 import com.eweise.domain.service.Validator.{FieldValue, ValidationResult, maxLength, notNull}
-import com.eweise.domain.{LoginRequest, RegistrationRequest, RegistrationResponse, ValidationFailedException}
+import com.eweise.domain.{LoginRequest, LoginResponse, NotFoundException, RegistrationRequest, RegistrationResponse, ValidationFailedException}
 import scalikejdbc.DB
 
 
@@ -27,17 +27,26 @@ class PersonService(implicit userRepo: PersonRepository, webToken: JwtToken) {
         ).mapN(RegistrationRequest)
     }
 
-    def login(user: LoginRequest): Option[Person] =
-        DB localTx { implicit session => userRepo.findByEmailAndPassword(user.email, user.password) }
+    def login(user: LoginRequest): LoginResponse =
+        DB localTx { implicit session =>
+            val foundPerson =
+                userRepo.findByEmailAndPassword(user.email, user.password)
+                        .getOrElse(throw new NotFoundException("Invalid username or password"))
+
+            LoginResponse(
+                username = foundPerson.username,
+                token = webToken.create(foundPerson.id.toString)
+            )
+        }
 
     def register(request: RegistrationRequest): RegistrationResponse = {
         validateForm(request) match {
-            case Valid(value) => {
+            case Valid(value) =>
                 val newPerson = DB localTx { implicit session =>
                     userRepo.create(createPerson(value))
                 }
                 RegistrationResponse(webToken.create(newPerson.id.toString))
-            }
+
             case Invalid(errors) => throw new ValidationFailedException(errors.toList)
         }
     }
